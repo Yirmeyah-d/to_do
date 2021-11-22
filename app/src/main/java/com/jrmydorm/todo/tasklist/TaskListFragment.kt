@@ -31,12 +31,14 @@ class TaskListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val recyclerView = view.findViewById<RecyclerView>(R.id.recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(activity)
-        recyclerView.adapter = TaskListAdapter(taskList)
+        val adapter = TaskListAdapter()
+        recyclerView.adapter = adapter
+        adapter.submitList(taskList.toList())
         val button = view.findViewById<FloatingActionButton>(R.id.floatingActionButton);
         button.setOnClickListener {
             taskList.add(Task(id = UUID.randomUUID().toString(), title = "Task ${taskList.size + 1}"))
-            recyclerView.adapter = TaskListAdapter(taskList);
+            recyclerView.adapter = adapter
+            adapter.submitList(taskList.toList())
         }
-
     }
 }

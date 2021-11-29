@@ -1,9 +1,11 @@
 package com.jrmydorm.todo.tasklist
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.jrmydorm.todo.FormActivity
 import com.jrmydorm.todo.databinding.ItemTaskBinding
 import com.jrmydorm.todo.model.Task
 
@@ -16,13 +18,17 @@ object TasksDiffCallback : DiffUtil.ItemCallback<Task>() {
 class TaskListAdapter() : ListAdapter<Task,TaskListAdapter.TaskViewHolder>(TasksDiffCallback) {
 
     var onClickDelete: (Task) -> Unit = {}
+    var onClickEdit: (Task) -> Unit = {}
 
     inner class TaskViewHolder(private val binding: ItemTaskBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(task: Task) {
             binding.taskTitle.text =  task.title
             binding.taskDesc.text = task.description
-            binding.imageButton.setOnClickListener{
+            binding.deleteButton.setOnClickListener{
                 onClickDelete(task)
+            }
+            binding.editButton.setOnClickListener{
+                onClickEdit(task)
             }
         }
     }

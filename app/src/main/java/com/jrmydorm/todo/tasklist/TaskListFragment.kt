@@ -15,9 +15,19 @@ import java.util.*
 
 class TaskListFragment : Fragment() {
     private lateinit var binding: FragmentTaskListBinding
+    val adapter = TaskListAdapter()
 
     val formLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        // ici on récupérera le résultat pour le traiter
+        val task = result.data?.getSerializableExtra("task") as? Task
+
+        if (task != null) {
+            val oldTask = taskList.firstOrNull { it.id == task.id }
+            if (oldTask != null)  taskList.remove(oldTask)
+
+            taskList.add(task)
+            adapter.submitList(taskList.toList())
+        }
+
     }
 
     private val taskList = mutableListOf(
@@ -39,19 +49,22 @@ class TaskListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         val recyclerView = binding.recyclerView
         recyclerView.layoutManager = LinearLayoutManager(activity)
-        val adapter = TaskListAdapter()
         binding.recyclerView.adapter = adapter
         adapter.submitList(taskList.toList())
         binding.floatingActionButton.setOnClickListener{
             val intent = Intent(activity, FormActivity::class.java)
-            intent.putExtra("task", newTask)
             formLauncher.launch(intent)
-            //taskList.add(Task(id = UUID.randomUUID().toString(), title = "Task ${taskList.size + 1}"))
-            //adapter.submitList(taskList.toList())
         }
         adapter.onClickDelete = { task ->
             taskList.remove(task)
             adapter.submitList(taskList.toList())
         }
+
+        adapter.onClickEdit = { task ->
+            val intent = Intent(activity, FormActivity::class.java)
+            intent.putExtra("task", task)
+            formLauncher.launch(intent)
+        }
+
     }
 }

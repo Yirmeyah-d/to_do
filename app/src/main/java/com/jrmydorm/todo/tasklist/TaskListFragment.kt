@@ -1,17 +1,24 @@
 package com.jrmydorm.todo.tasklist
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.jrmydorm.todo.FormActivity
 import com.jrmydorm.todo.databinding.FragmentTaskListBinding
 import com.jrmydorm.todo.model.Task
 import java.util.*
 
 class TaskListFragment : Fragment() {
     private lateinit var binding: FragmentTaskListBinding
+
+    val formLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        // ici on récupérera le résultat pour le traiter
+    }
 
     private val taskList = mutableListOf(
         Task(id = "id_1", title = "Task 1", description = "description 1"),
@@ -36,8 +43,11 @@ class TaskListFragment : Fragment() {
         binding.recyclerView.adapter = adapter
         adapter.submitList(taskList.toList())
         binding.floatingActionButton.setOnClickListener{
-            taskList.add(Task(id = UUID.randomUUID().toString(), title = "Task ${taskList.size + 1}"))
-            adapter.submitList(taskList.toList())
+            val intent = Intent(activity, FormActivity::class.java)
+            intent.putExtra("task", newTask)
+            formLauncher.launch(intent)
+            //taskList.add(Task(id = UUID.randomUUID().toString(), title = "Task ${taskList.size + 1}"))
+            //adapter.submitList(taskList.toList())
         }
         adapter.onClickDelete = { task ->
             taskList.remove(task)

@@ -37,7 +37,10 @@ class TaskListFragment : Fragment() {
         adapter.submitList(taskList.toList())
         binding.floatingActionButton.setOnClickListener{
             taskList.add(Task(id = UUID.randomUUID().toString(), title = "Task ${taskList.size + 1}"))
-            recyclerView.adapter = adapter
+            adapter.submitList(taskList.toList())
+        }
+        adapter.onClickDelete = { task ->
+            taskList.remove(task)
             adapter.submitList(taskList.toList())
         }
     }

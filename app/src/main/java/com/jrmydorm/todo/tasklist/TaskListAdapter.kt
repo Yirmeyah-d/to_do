@@ -15,10 +15,15 @@ object TasksDiffCallback : DiffUtil.ItemCallback<Task>() {
 
 class TaskListAdapter() : ListAdapter<Task,TaskListAdapter.TaskViewHolder>(TasksDiffCallback) {
 
+    var onClickDelete: (Task) -> Unit = {}
+
     inner class TaskViewHolder(private val binding: ItemTaskBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(task: Task) {
             binding.taskTitle.text =  task.title
             binding.taskDesc.text = task.description
+            binding.imageButton.setOnClickListener{
+                onClickDelete(task)
+            }
         }
     }
 

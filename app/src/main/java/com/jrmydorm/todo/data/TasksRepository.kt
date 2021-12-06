@@ -28,14 +28,21 @@ class TasksRepository {
     }
 
 
-    suspend fun createTask(task: Task): Task? {
-        val createTaskResponse = tasksWebService.create(task)
-        return if (createTaskResponse.isSuccessful) createTaskResponse.body() else null
+    suspend fun createTask(task: Task) {
+        val tasksResponse = tasksWebService.create(task)
+        if (tasksResponse.isSuccessful) {
+            val createdTask = tasksResponse.body()!!
+            _taskList.value = _taskList.value + createdTask
+        }
     }
 
 
-    suspend fun deleteTask(task: Task): Boolean {
-        return task.id != null && tasksWebService.deleteTask(task.id).isSuccessful
+    suspend fun deleteTask(task: Task) {
+        val tasksResponse = tasksWebService.deleteTask(task.id)
+        if (tasksResponse.isSuccessful) {
+            _taskList.value = _taskList.value - task
+        }
+
     }
 
     suspend fun updateTask(task: Task) {

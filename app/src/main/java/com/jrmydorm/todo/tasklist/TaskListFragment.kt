@@ -14,7 +14,6 @@ import com.jrmydorm.todo.data.TasksRepository
 import com.jrmydorm.todo.databinding.FragmentTaskListBinding
 import com.jrmydorm.todo.models.Task
 import com.jrmydorm.todo.network.Api
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import java.util.*
@@ -25,24 +24,34 @@ class TaskListFragment : Fragment() {
     private val tasksRepository = TasksRepository()
 
 
-    val formLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        val task = result.data?.getSerializableExtra("task") as? Task
+    val createFormLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            val task = result.data?.getSerializableExtra("task") as? Task
 
-        if (task != null) {
-            val oldTask = taskList.firstOrNull { it.id == task.id }
-            if (oldTask != null)  taskList.remove(oldTask)
+            if (task != null) {
 
-            taskList.add(task)
-            adapter.submitList(taskList.toList())
+                lifecycleScope.launch {
+                    tasksRepository.createTask(task)
+                }
+
+            }
+
         }
 
-    }
+    val updateFormLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            val task = result.data?.getSerializableExtra("task") as? Task
 
-    private val taskList = mutableListOf(
-        Task(id = "id_1", title = "Task 1", description = "description 1"),
-        Task(id = "id_2", title = "Task 2"),
-        Task(id = "id_3", title = "Task 3")
-    )
+            if (task != null) {
+                lifecycleScope.launch {
+                    tasksRepository.updateTask(task)
+                }
+
+            }
+
+        }
+
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -53,25 +62,26 @@ class TaskListFragment : Fragment() {
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?)  {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val recyclerView = binding.recyclerView
         recyclerView.layoutManager = LinearLayoutManager(activity)
         binding.recyclerView.adapter = adapter
-        adapter.submitList(taskList.toList())
-        binding.floatingActionButton.setOnClickListener{
+        //adapter.submitList(taskList.toList())
+        binding.floatingActionButton.setOnClickListener {
             val intent = Intent(activity, FormActivity::class.java)
-            formLauncher.launch(intent)
+            createFormLauncher.launch(intent)
         }
         adapter.onClickDelete = { task ->
-            taskList.remove(task)
-            adapter.submitList(taskList.toList())
+            lifecycleScope.launch {
+                tasksRepository.deleteTask(task)
+            }
         }
 
         adapter.onClickEdit = { task ->
             val intent = Intent(activity, FormActivity::class.java)
             intent.putExtra("task", task)
-            formLauncher.launch(intent)
+            updateFormLauncher.launch(intent)
         }
 
         lifecycleScope.launch { // on lance une coroutine car `collect` est `suspend`
@@ -87,7 +97,7 @@ class TaskListFragment : Fragment() {
         lifecycleScope.launch {
             tasksRepository.refresh() // on demande de rafraîchir les données sans attendre le retour directement
             val userInfo = Api.userWebService.getInfo().body()!!
-            binding.userInfoTextView.text = "${userInfo.firstName} ${userInfo.lastName}" ;
+            binding.userInfoTextView.text = "${userInfo.firstName} ${userInfo.lastName}";
         }
     }
 }

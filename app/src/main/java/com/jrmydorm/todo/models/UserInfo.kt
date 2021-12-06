@@ -1,4 +1,4 @@
-package com.jrmydorm.todo.model
+package com.jrmydorm.todo.models
 
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable

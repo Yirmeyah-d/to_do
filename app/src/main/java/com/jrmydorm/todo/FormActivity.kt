@@ -4,7 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
-import com.jrmydorm.todo.model.Task
+import com.jrmydorm.todo.models.Task
 import java.util.*
 
 class FormActivity : AppCompatActivity() {

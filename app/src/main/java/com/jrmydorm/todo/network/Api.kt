@@ -1,6 +1,8 @@
 package com.jrmydorm.todo.network
 
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
+import com.jrmydorm.todo.interfaces.TasksWebService
+import com.jrmydorm.todo.interfaces.UserWebService
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
@@ -9,7 +11,7 @@ import retrofit2.Retrofit
 object Api {
     // constantes qui serviront à faire les requêtes
     private const val BASE_URL = "https://android-tasks-api.herokuapp.com/api/"
-    private const val TOKEN = "COPIEZ_VOTRE_TOKEN_ICI"
+    private const val TOKEN = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjo1NDUsImV4cCI6MTY3MDMzMjMwNn0.OI3It_NoQLXPVl-Qp7jbcqKJuE8lvuWZVsee1Vm0niQ"
 
     // client HTTP
     private val okHttpClient by lazy {
@@ -23,6 +25,7 @@ object Api {
             }
             .build()
     }
+
 
     // sérializeur JSON: transforme le JSON en objets kotlin et inversement
     private val jsonSerializer = Json {
@@ -40,4 +43,14 @@ object Api {
         .client(okHttpClient)
         .addConverterFactory(converterFactory)
         .build()
+
+
+    val userWebService by lazy {
+        retrofit.create(UserWebService::class.java)
+    }
+
+    val tasksWebService by lazy {
+        retrofit.create(TasksWebService::class.java)
+    }
+
 }

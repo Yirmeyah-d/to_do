@@ -1,13 +1,11 @@
 package com.jrmydorm.todo.tasklist
-import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
-import com.jrmydorm.todo.FormActivity
 import com.jrmydorm.todo.databinding.ItemTaskBinding
-import com.jrmydorm.todo.model.Task
+import com.jrmydorm.todo.models.Task
 
 object TasksDiffCallback : DiffUtil.ItemCallback<Task>() {
     override fun areItemsTheSame(oldItem: Task, newItem: Task) =  oldItem.id == newItem.id;

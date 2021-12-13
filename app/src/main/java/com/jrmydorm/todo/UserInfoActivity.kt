@@ -9,20 +9,28 @@ import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.Settings
+import android.view.View
 import android.widget.Button
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.launch
 import androidx.core.net.toUri
 import androidx.lifecycle.lifecycleScope
+import com.google.android.material.snackbar.Snackbar
+import com.google.modernstorage.mediastore.FileType
+import com.google.modernstorage.mediastore.MediaStoreRepository
+import com.google.modernstorage.mediastore.SharedPrimary
 import com.jrmydorm.todo.network.Api
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
 import java.io.File
+import java.util.*
 
 class UserInfoActivity : AppCompatActivity() {
 
     private val userWebService = Api.userWebService
+    private lateinit var photoUri: Uri
+    val mediaStore by lazy { MediaStoreRepository(this) }
 
     private fun convert(uri: Uri): MultipartBody.Part {
         return MultipartBody.Part.createFormData(
@@ -36,7 +44,7 @@ class UserInfoActivity : AppCompatActivity() {
         // ici on construit une pop-up système (Dialog) pour expliquer la nécessité de la demande de permission
         AlertDialog.Builder(this)
             .setMessage("🥺 On a besoin de la caméra, vraiment! 👉👈")
-            .setPositiveButton("Bon, ok") { _, _ ->  launchAppSettings() }
+            .setPositiveButton("Bon, ok") { _, _ -> launchAppSettings() }
             .setNegativeButton("Nope") { dialog, _ -> dialog.dismiss() }
             .show()
     }
@@ -59,23 +67,19 @@ class UserInfoActivity : AppCompatActivity() {
             if (accepted) {
                 // lancer l'action souhaitée
                 launchCamera()
-            }
-            else {
+            } else {
                 // afficher une explication
                 showExplanation()
             }
         }
 
 
-
-
-    private val cameraLauncher = registerForActivityResult(ActivityResultContracts.TakePicturePreview()) { bitmap ->
-        val tmpFile = File.createTempFile("avatar", "jpeg")
-        tmpFile.outputStream().use {
-            bitmap?.compress(Bitmap.CompressFormat.JPEG, 100, it)
+    private val cameraLauncher =
+        registerForActivityResult(ActivityResultContracts.TakePicture()) { accepted ->
+            if (accepted) handleImage(photoUri)
+            else Snackbar.make(View(this), "Échec!", Snackbar.LENGTH_LONG)
         }
-        handleImage(tmpFile.toUri())
-    }
+
 
     private fun handleImage(imageUri: Uri) {
         lifecycleScope.launch {
@@ -84,7 +88,7 @@ class UserInfoActivity : AppCompatActivity() {
     }
 
     private fun launchCamera() {
-        cameraLauncher.launch()
+        cameraLauncher.launch(photoUri)
     }
 
     private fun launchAppSettings() {
@@ -95,14 +99,30 @@ class UserInfoActivity : AppCompatActivity() {
         startActivity(intent)
     }
 
+
+    private val galleryLauncher =
+        registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
+            if (uri != null) {
+                handleImage(uri)
+            }
+
+        }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_user_info)
 
-        val take_picture_button =  findViewById<Button>(R.id.take_picture_button);
-        take_picture_button.setOnClickListener{
+        val take_picture_button = findViewById<Button>(R.id.take_picture_button);
+        take_picture_button.setOnClickListener {
             launchCameraWithPermission()
         }
 
+        lifecycleScope.launchWhenStarted {
+            photoUri = mediaStore.createMediaUri(
+                filename = "picture-${UUID.randomUUID()}.jpg",
+                type = FileType.IMAGE,
+                location = SharedPrimary
+            ).getOrThrow()
+        }
     }
 }

@@ -10,11 +10,15 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
+import coil.load
+import coil.transform.CircleCropTransformation
 import com.jrmydorm.todo.FormActivity
+import com.jrmydorm.todo.UserInfoActivity
 import com.jrmydorm.todo.databinding.FragmentTaskListBinding
 import com.jrmydorm.todo.models.Task
 import com.jrmydorm.todo.network.Api
 import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class TaskListFragment : Fragment() {
@@ -26,7 +30,6 @@ class TaskListFragment : Fragment() {
         val listener = object :  TaskListListener{
             override fun onClickDelete(task: Task) {
                 viewModel.deleteTask(task)
-                viewModel.loadTasks()
             }
 
             override fun onClickEdit(task: Task) {
@@ -82,9 +85,13 @@ class TaskListFragment : Fragment() {
         }
 
         lifecycleScope.launch {
-            viewModel.taskList.collect { newList ->
+            viewModel.taskList.collectLatest { newList ->
                 adapter.submitList(newList)
             }
+        }
+        binding.imageView.setOnClickListener{
+            val intent = Intent(activity, UserInfoActivity::class.java)
+            createFormLauncher.launch(intent)
         }
     }
 
@@ -94,6 +101,9 @@ class TaskListFragment : Fragment() {
             val userInfo = Api.userWebService.getInfo().body()!!
             binding.userInfoTextView.text = "${userInfo.firstName} ${userInfo.lastName}"
             viewModel.loadTasks()
+        }
+        binding.imageView.load("https://goo.gl/gEgYUd") {
+            transformations(CircleCropTransformation())
         }
     }
 

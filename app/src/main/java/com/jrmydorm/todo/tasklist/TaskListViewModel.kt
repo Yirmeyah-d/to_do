@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
+import java.lang.IllegalStateException
 
 class TaskListViewModel : ViewModel() {
     private val tasksRepository = TasksRepository()
@@ -25,8 +26,8 @@ class TaskListViewModel : ViewModel() {
     fun deleteTask(task: Task) {
         viewModelScope.launch {
             val taskResponse = tasksRepository.deleteTask(task);
-            if(taskResponse != null){
-                _taskList.value = _taskList.value - taskResponse
+            if(taskResponse){
+                _taskList.value = _taskList.value - task
             }
         }
     }

@@ -16,9 +16,9 @@ class TasksRepository {
         return if (createTaskResponse.isSuccessful) createTaskResponse.body() else null
     }
 
-    suspend fun deleteTask(task: Task): Task? {
+    suspend fun deleteTask(task: Task): Boolean {
         val deleteTaskResponse = tasksWebService.deleteTask(task.id)
-        return if (deleteTaskResponse.isSuccessful) deleteTaskResponse.body() else null
+        return deleteTaskResponse.isSuccessful
     }
 
     suspend fun updateTask(task: Task): Task? {

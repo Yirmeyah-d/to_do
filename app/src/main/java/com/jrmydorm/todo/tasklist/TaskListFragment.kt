@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import coil.load
 import coil.transform.CircleCropTransformation
 import com.jrmydorm.todo.FormActivity
+import com.jrmydorm.todo.R
 import com.jrmydorm.todo.UserInfoActivity
 import com.jrmydorm.todo.databinding.FragmentTaskListBinding
 import com.jrmydorm.todo.models.Task
@@ -101,10 +102,12 @@ class TaskListFragment : Fragment() {
             val userInfo = Api.userWebService.getInfo().body()!!
             binding.userInfoTextView.text = "${userInfo.firstName} ${userInfo.lastName}"
             viewModel.loadTasks()
+            binding.imageView.load(userInfo.avatar) {
+                transformations(CircleCropTransformation())
+                error(R.drawable.ic_launcher_background)
+            }
         }
-        binding.imageView.load("https://goo.gl/gEgYUd") {
-            transformations(CircleCropTransformation())
-        }
+
     }
 
 }

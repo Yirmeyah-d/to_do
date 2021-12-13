@@ -12,21 +12,22 @@ object TasksDiffCallback : DiffUtil.ItemCallback<Task>() {
     override fun areContentsTheSame(oldItem: Task, newItem: Task) = oldItem.equals(newItem);
 }
 
+interface TaskListListener {
+    fun onClickDelete(task: Task)
+    fun onClickEdit(task: Task)
+}
 
-class TaskListAdapter() : ListAdapter<Task,TaskListAdapter.TaskViewHolder>(TasksDiffCallback) {
-
-    var onClickDelete: (Task) -> Unit = {}
-    var onClickEdit: (Task) -> Unit = {}
+class TaskListAdapter(val listener: TaskListListener) : ListAdapter<Task,TaskListAdapter.TaskViewHolder>(TasksDiffCallback) {
 
     inner class TaskViewHolder(private val binding: ItemTaskBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(task: Task) {
             binding.taskTitle.text =  task.title
             binding.taskDesc.text = task.description
             binding.deleteButton.setOnClickListener{
-                onClickDelete(task)
+                listener.onClickDelete(task)
             }
             binding.editButton.setOnClickListener{
-                onClickEdit(task)
+                listener.onClickEdit(task)
             }
         }
     }

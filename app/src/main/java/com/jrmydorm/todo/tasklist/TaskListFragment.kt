@@ -7,31 +7,44 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.jrmydorm.todo.FormActivity
-import com.jrmydorm.todo.data.TasksRepository
 import com.jrmydorm.todo.databinding.FragmentTaskListBinding
 import com.jrmydorm.todo.models.Task
 import com.jrmydorm.todo.network.Api
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
-import java.util.*
 
 class TaskListFragment : Fragment() {
     private lateinit var binding: FragmentTaskListBinding
-    val adapter = TaskListAdapter()
-    private val tasksRepository = TasksRepository()
+    private val adapter = TaskListAdapter(createListener())
+    private val viewModel: TaskListViewModel by viewModels()
 
+    fun createListener(): TaskListListener {
+        val listener = object :  TaskListListener{
+            override fun onClickDelete(task: Task) {
+                viewModel.deleteTask(task)
+                viewModel.loadTasks()
+            }
+
+            override fun onClickEdit(task: Task) {
+                val intent = Intent(activity, FormActivity::class.java)
+                intent.putExtra("task", task)
+                updateFormLauncher.launch(intent)
+            }
+        }
+        return listener
+    }
 
     val createFormLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             val task = result.data?.getSerializableExtra("task") as? Task
 
             if (task != null) {
-
                 lifecycleScope.launch {
-                    tasksRepository.createTask(task)
+                    viewModel.addTask(task)
                 }
 
             }
@@ -41,16 +54,12 @@ class TaskListFragment : Fragment() {
     val updateFormLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             val task = result.data?.getSerializableExtra("task") as? Task
-
             if (task != null) {
                 lifecycleScope.launch {
-                    tasksRepository.updateTask(task)
+                    viewModel.editTask(task)
                 }
-
             }
-
         }
-
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -67,27 +76,14 @@ class TaskListFragment : Fragment() {
         val recyclerView = binding.recyclerView
         recyclerView.layoutManager = LinearLayoutManager(activity)
         binding.recyclerView.adapter = adapter
-        //adapter.submitList(taskList.toList())
         binding.floatingActionButton.setOnClickListener {
             val intent = Intent(activity, FormActivity::class.java)
             createFormLauncher.launch(intent)
         }
-        adapter.onClickDelete = { task ->
-            lifecycleScope.launch {
-                tasksRepository.deleteTask(task)
-            }
-        }
 
-        adapter.onClickEdit = { task ->
-            val intent = Intent(activity, FormActivity::class.java)
-            intent.putExtra("task", task)
-            updateFormLauncher.launch(intent)
-        }
-
-        lifecycleScope.launch { // on lance une coroutine car `collect` est `suspend`
-            tasksRepository.taskList.collect { newList ->
+        lifecycleScope.launch {
+            viewModel.taskList.collect { newList ->
                 adapter.submitList(newList)
-
             }
         }
     }
@@ -95,9 +91,10 @@ class TaskListFragment : Fragment() {
     override fun onResume() {
         super.onResume()
         lifecycleScope.launch {
-            tasksRepository.refresh() // on demande de rafraîchir les données sans attendre le retour directement
             val userInfo = Api.userWebService.getInfo().body()!!
-            binding.userInfoTextView.text = "${userInfo.firstName} ${userInfo.lastName}";
+            binding.userInfoTextView.text = "${userInfo.firstName} ${userInfo.lastName}"
+            viewModel.loadTasks()
         }
     }
+
 }

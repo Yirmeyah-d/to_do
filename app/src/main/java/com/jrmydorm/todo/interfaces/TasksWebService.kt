@@ -9,11 +9,11 @@ interface TasksWebService {
     suspend fun getTasks(): Response<List<Task>>
 
     @POST("tasks")
-    suspend fun create(@Body task: Task): Response<Task>
+    suspend fun createTask(@Body task: Task): Response<Task>
 
     @PATCH("tasks/{id}")
-    suspend fun update(@Body task: Task, @Path("id") id: String? = task.id): Response<Task>
+    suspend fun updateTask(@Body task: Task, @Path("id") id: String? = task.id): Response<Task>
 
     @DELETE("tasks/{id}")
-    suspend fun deleteTask(@Path("id") id: String):  Response<Unit>
+    suspend fun deleteTask(@Path("id") id: String):  Response<Task>
 }

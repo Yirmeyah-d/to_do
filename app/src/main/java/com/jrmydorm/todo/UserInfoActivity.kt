@@ -117,6 +117,11 @@ class UserInfoActivity : AppCompatActivity() {
             launchCameraWithPermission()
         }
 
+        val upload_image_button = findViewById<Button>(R.id.upload_image_button);
+        upload_image_button.setOnClickListener {
+            galleryLauncher.launch("image/*")
+        }
+
         lifecycleScope.launchWhenStarted {
             photoUri = mediaStore.createMediaUri(
                 filename = "picture-${UUID.randomUUID()}.jpg",

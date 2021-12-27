@@ -4,32 +4,33 @@ import android.Manifest
 import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.graphics.Bitmap
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.Settings
-import android.view.View
-import android.widget.Button
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.result.launch
-import androidx.core.net.toUri
+import androidx.activity.viewModels
 import androidx.lifecycle.lifecycleScope
+import coil.load
+import coil.transform.CircleCropTransformation
 import com.google.android.material.snackbar.Snackbar
 import com.google.modernstorage.mediastore.FileType
 import com.google.modernstorage.mediastore.MediaStoreRepository
 import com.google.modernstorage.mediastore.SharedPrimary
+import com.jrmydorm.todo.databinding.ActivityUserInfoBinding
 import com.jrmydorm.todo.network.Api
+import com.jrmydorm.todo.user.UserInfoViewModel
 import kotlinx.coroutines.launch
 import okhttp3.MultipartBody
 import okhttp3.RequestBody.Companion.toRequestBody
-import java.io.File
 import java.util.*
 
 class UserInfoActivity : AppCompatActivity() {
 
-    private val userWebService = Api.userWebService
     private lateinit var photoUri: Uri
+    private lateinit var binding: ActivityUserInfoBinding
+    private val viewModel: UserInfoViewModel by viewModels()
+
     val mediaStore by lazy { MediaStoreRepository(this) }
 
     private fun convert(uri: Uri): MultipartBody.Part {
@@ -65,10 +66,8 @@ class UserInfoActivity : AppCompatActivity() {
     private val cameraPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { accepted ->
             if (accepted) {
-                // lancer l'action souhaitée
                 launchCamera()
             } else {
-                // afficher une explication
                 showExplanation()
             }
         }
@@ -77,13 +76,13 @@ class UserInfoActivity : AppCompatActivity() {
     private val cameraLauncher =
         registerForActivityResult(ActivityResultContracts.TakePicture()) { accepted ->
             if (accepted) handleImage(photoUri)
-            else Snackbar.make(View(this), "Échec!", Snackbar.LENGTH_LONG)
+            else Snackbar.make(binding.root, "Échec!", Snackbar.LENGTH_LONG)
         }
 
 
     private fun handleImage(imageUri: Uri) {
         lifecycleScope.launch {
-            val updateAvatarResponse = userWebService.updateAvatar(convert(imageUri))
+            viewModel.uploadAvatar(contentResolver.openInputStream(imageUri)!!.readBytes())
         }
     }
 
@@ -104,20 +103,23 @@ class UserInfoActivity : AppCompatActivity() {
         registerForActivityResult(ActivityResultContracts.GetContent()) { uri ->
             if (uri != null) {
                 handleImage(uri)
+                finish();
             }
 
         }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_user_info)
+        //setContentView(R.layout.activity_user_info)
 
-        val take_picture_button = findViewById<Button>(R.id.take_picture_button);
+        binding = ActivityUserInfoBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        val take_picture_button = binding.takePictureButton
         take_picture_button.setOnClickListener {
             launchCameraWithPermission()
         }
 
-        val upload_image_button = findViewById<Button>(R.id.upload_image_button);
+        val upload_image_button = binding.uploadImageButton
         upload_image_button.setOnClickListener {
             galleryLauncher.launch("image/*")
         }
@@ -129,5 +131,13 @@ class UserInfoActivity : AppCompatActivity() {
                 location = SharedPrimary
             ).getOrThrow()
         }
+        lifecycleScope.launch {
+            val userInfo = Api.userWebService.getInfo().body()!!
+            binding.imageView.load(userInfo.avatar) {
+                transformations(CircleCropTransformation())
+                error(R.drawable.ic_launcher_background)
+            }
+        }
+
     }
 }

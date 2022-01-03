@@ -1,6 +1,8 @@
 package com.jrmydorm.todo.interfaces
 
 import android.net.Uri
+import com.jrmydorm.todo.models.LoginForm
+import com.jrmydorm.todo.models.LoginResponse
 import com.jrmydorm.todo.models.UserInfo
 import okhttp3.MultipartBody
 import retrofit2.Response
@@ -16,4 +18,7 @@ interface UserWebService {
 
     @PATCH("users")
     suspend fun update(@Body user: UserInfo): Response<UserInfo>
+
+    @POST("users/login")
+    suspend fun login(@Body user: LoginForm): Response<LoginResponse>
 }

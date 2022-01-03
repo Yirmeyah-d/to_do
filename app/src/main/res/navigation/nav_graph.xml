@@ -20,10 +20,18 @@
         android:id="@+id/loginFragment"
         android:name="com.jrmydorm.todo.login.LoginFragment"
         android:label="fragment_login"
-        tools:layout="@layout/fragment_login" />
+        tools:layout="@layout/fragment_login" >
+        <action
+            android:id="@+id/action_loginFragment_to_taskListFragment"
+            app:destination="@id/taskListFragment" />
+    </fragment>
     <fragment
         android:id="@+id/signupFragment"
         android:name="com.jrmydorm.todo.signup.SignupFragment"
         android:label="fragment_signup"
         tools:layout="@layout/fragment_signup" />
+    <fragment
+        android:id="@+id/taskListFragment"
+        android:name="com.jrmydorm.todo.tasklist.TaskListFragment"
+        android:label="TaskListFragment" />
 </navigation>

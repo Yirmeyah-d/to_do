@@ -13,17 +13,19 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.ToDoJeremyDormevil">
         <activity
+            android:name=".AuthenticationActivity"
+            android:exported="false" />
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+        <activity
             android:name=".UserInfoActivity"
             android:exported="false" />
         <activity android:name=".FormActivity" />
         <activity
             android:name=".MainActivity"
             android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
     </application>
 

@@ -10,6 +10,7 @@ import android.os.Bundle
 import android.provider.Settings
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.lifecycleScope
 import coil.load
 import coil.transform.CircleCropTransformation
@@ -20,9 +21,8 @@ import com.google.modernstorage.mediastore.SharedPrimary
 import com.jrmydorm.todo.databinding.ActivityUserInfoBinding
 import com.jrmydorm.todo.network.Api
 import com.jrmydorm.todo.user.UserInfoViewModel
+import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
-import okhttp3.MultipartBody
-import okhttp3.RequestBody.Companion.toRequestBody
 import java.util.*
 
 class UserInfoActivity : AppCompatActivity() {
@@ -33,13 +33,6 @@ class UserInfoActivity : AppCompatActivity() {
 
     val mediaStore by lazy { MediaStoreRepository(this) }
 
-    private fun convert(uri: Uri): MultipartBody.Part {
-        return MultipartBody.Part.createFormData(
-            name = "avatar",
-            filename = "temp.jpeg",
-            body = this.contentResolver.openInputStream(uri)!!.readBytes().toRequestBody()
-        )
-    }
 
     private fun showExplanation() {
         // ici on construit une pop-up système (Dialog) pour expliquer la nécessité de la demande de permission
@@ -110,10 +103,20 @@ class UserInfoActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //setContentView(R.layout.activity_user_info)
-
         binding = ActivityUserInfoBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        lifecycleScope.launch {
+            viewModel.loadUserInfo()
+            viewModel.userInfo.collectLatest { newUserInfo ->
+                binding.userNameTextView.text = "${newUserInfo?.firstName} ${newUserInfo?.lastName}"
+                binding.userEmailTextView.text = "${newUserInfo?.email}"
+                binding.imageView.load(newUserInfo?.avatar) {
+                    transformations(CircleCropTransformation())
+                    error(R.drawable.ic_launcher_background)
+                }
+            }
+        }
+
         val take_picture_button = binding.takePictureButton
         take_picture_button.setOnClickListener {
             launchCameraWithPermission()
@@ -131,13 +134,10 @@ class UserInfoActivity : AppCompatActivity() {
                 location = SharedPrimary
             ).getOrThrow()
         }
-        lifecycleScope.launch {
-            val userInfo = Api.userWebService.getInfo().body()!!
-            binding.imageView.load(userInfo.avatar) {
-                transformations(CircleCropTransformation())
-                error(R.drawable.ic_launcher_background)
-            }
+
+        binding.editUserInfo.setOnClickListener {
+            //val intent = Intent(activity, FormActivity::class.java)
         }
 
     }
-}
+    }

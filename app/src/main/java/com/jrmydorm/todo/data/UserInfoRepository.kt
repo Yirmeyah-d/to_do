@@ -1,6 +1,5 @@
 package com.jrmydorm.todo.data
 
-import android.net.Uri
 import com.jrmydorm.todo.models.UserInfo
 import com.jrmydorm.todo.network.Api
 import okhttp3.MultipartBody
@@ -20,7 +19,11 @@ class UserInfoRepository {
     suspend fun uploadAvatar(bytes:ByteArray): UserInfo? {
         val updateAvatarResponse = userWebService.updateAvatar(convert(bytes))
         return if (updateAvatarResponse.isSuccessful) updateAvatarResponse.body() else null
+    }
 
+    suspend fun loadUserInfo(): UserInfo?{
+        val getInfoResponse = Api.userWebService.getInfo()
+        return if(getInfoResponse.isSuccessful) getInfoResponse.body() else null
     }
 
 

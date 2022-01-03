@@ -3,7 +3,6 @@ package com.jrmydorm.todo.user
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.jrmydorm.todo.data.UserInfoRepository
-import com.jrmydorm.todo.models.Task
 import com.jrmydorm.todo.models.UserInfo
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -18,8 +17,15 @@ class UserInfoViewModel  : ViewModel() {
     fun uploadAvatar(readBytes: ByteArray) {
         viewModelScope.launch {
             _userInfo.value = userInfoRepository.uploadAvatar(readBytes);
-
         }
     }
 
+    fun loadUserInfo(){
+        viewModelScope.launch {
+            val userResponse = userInfoRepository.loadUserInfo();
+            if(userResponse != null){
+                _userInfo.value = userResponse
+            }
+        }
+    }
 }

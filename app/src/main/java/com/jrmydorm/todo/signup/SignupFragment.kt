@@ -66,7 +66,7 @@ class SignupFragment : Fragment() {
                         PreferenceManager.getDefaultSharedPreferences(context).edit {
                             putString(SHARED_PREF_TOKEN_KEY, signupResponse.token)
                         }
-                        //findNavController().navigate(R.id.action_signupFragment_to_taskListFragment)
+                        findNavController().navigate(R.id.action_signupFragment_to_taskListFragment)
                         Toast.makeText(context, "Inscription réussie !", Toast.LENGTH_LONG).show()
 
                     } else {

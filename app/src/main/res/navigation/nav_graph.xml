@@ -15,6 +15,10 @@
         <action
             android:id="@+id/action_authenticationFragment_to_loginFragment"
             app:destination="@id/loginFragment" />
+        <action
+            android:id="@+id/action_authenticationFragment_to_taskListFragment"
+            app:destination="@id/taskListFragment" />
+
     </fragment>
     <fragment
         android:id="@+id/loginFragment"
@@ -37,10 +41,18 @@
     <fragment
         android:id="@+id/taskListFragment"
         android:name="com.jrmydorm.todo.tasklist.TaskListFragment"
-        android:label="TaskListFragment" />
-    <activity
-        android:id="@+id/mainActivity2"
-        android:name="com.jrmydorm.todo.MainActivity"
-        android:label="activity_main"
-        tools:layout="@layout/activity_main" />
+        android:label="TaskListFragment" >
+        <action
+            android:id="@+id/action_taskListFragment_to_formFragment"
+            app:destination="@id/formFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/formFragment"
+        android:name="com.jrmydorm.todo.form.FormFragment"
+        android:label="fragment_form"
+        tools:layout="@layout/fragment_form" >
+        <action
+            android:id="@+id/action_formFragment_to_taskListFragment"
+            app:destination="@id/taskListFragment" />
+    </fragment>
 </navigation>

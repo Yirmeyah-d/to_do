@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import com.jrmydorm.todo.R
 import com.jrmydorm.todo.databinding.FragmentAuthenticationBinding
+import com.jrmydorm.todo.network.Api
 
 class AuthenticationFragment : Fragment() {
 
@@ -25,6 +26,12 @@ class AuthenticationFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        val Token = Api.getToken()
+        if(Token.isNullOrEmpty() == false){
+            findNavController().navigate(R.id.action_authenticationFragment_to_taskListFragment)
+        }
+
         binding.login.setOnClickListener {
             findNavController().navigate(R.id.action_authenticationFragment_to_loginFragment)
 

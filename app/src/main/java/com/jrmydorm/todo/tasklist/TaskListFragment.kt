@@ -2,6 +2,7 @@ package com.jrmydorm.todo.tasklist
 
 import android.content.Intent
 import android.os.Bundle
+import android.preference.PreferenceManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -9,6 +10,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import coil.load
 import coil.transform.CircleCropTransformation
@@ -17,6 +19,8 @@ import com.jrmydorm.todo.R
 import com.jrmydorm.todo.UserInfoActivity
 import com.jrmydorm.todo.databinding.FragmentTaskListBinding
 import com.jrmydorm.todo.models.Task
+import com.jrmydorm.todo.network.Api
+import com.jrmydorm.todo.network.Api.SHARED_PREF_TOKEN_KEY
 import com.jrmydorm.todo.user.UserInfoViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
@@ -81,7 +85,7 @@ class TaskListFragment : Fragment() {
         recyclerView.layoutManager = LinearLayoutManager(activity)
         binding.recyclerView.adapter = adapter
         binding.floatingActionButton.setOnClickListener {
-            val intent = Intent(activity, FormActivity::class.java)
+                val intent = Intent(activity, FormActivity::class.java)
             createFormLauncher.launch(intent)
         }
 
@@ -94,19 +98,24 @@ class TaskListFragment : Fragment() {
             val intent = Intent(activity, UserInfoActivity::class.java)
             createFormLauncher.launch(intent)
         }
+
+        binding.signOutButton.setOnClickListener{
+            PreferenceManager.getDefaultSharedPreferences(context).edit().remove(SHARED_PREF_TOKEN_KEY).commit()
+            findNavController().popBackStack()
+        }
     }
 
     override fun onResume() {
         super.onResume()
-//        lifecycleScope.launch {
-//            val userInfo = Api.userWebService.getInfo().body()!!
-//            binding.userInfoTextView.text = "${userInfo.firstName} ${userInfo.lastName}"
-//            viewModel.loadTasks()
-//            binding.imageView.load(userInfo.avatar) {
-//                transformations(CircleCropTransformation())
-//                error(R.drawable.ic_launcher_background)
-//            }
-//        }
+/*        lifecycleScope.launch {
+            val userInfo = Api.userWebService.getInfo().body()!!
+            binding.userInfoTextView.text = "${userInfo.firstName} ${userInfo.lastName}"
+            viewModel.loadTasks()
+            binding.imageView.load(userInfo.avatar) {
+                transformations(CircleCropTransformation())
+                error(R.drawable.ic_launcher_background)
+            }
+        }*/
         lifecycleScope.launch {
             userInfoViewModel.loadUserInfo()
             userInfoViewModel.userInfo.collectLatest { newUserInfo ->

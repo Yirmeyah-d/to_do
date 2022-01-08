@@ -8,16 +8,8 @@ import okhttp3.RequestBody.Companion.toRequestBody
 class UserInfoRepository {
     private val userWebService = Api.userWebService
 
-    private fun convert(bytes: ByteArray): MultipartBody.Part {
-        return MultipartBody.Part.createFormData(
-            name = "avatar",
-            filename = "temp.jpeg",
-            body = bytes.toRequestBody()
-        )
-    }
-
-    suspend fun uploadAvatar(bytes:ByteArray): UserInfo? {
-        val updateAvatarResponse = userWebService.updateAvatar(convert(bytes))
+    suspend fun uploadAvatar(part : MultipartBody.Part): UserInfo? {
+        val updateAvatarResponse = userWebService.updateAvatar(part)
         return if (updateAvatarResponse.isSuccessful) updateAvatarResponse.body() else null
     }
 

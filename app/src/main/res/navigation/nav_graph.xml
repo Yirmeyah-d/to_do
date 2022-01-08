@@ -45,6 +45,9 @@
         <action
             android:id="@+id/action_taskListFragment_to_formFragment"
             app:destination="@id/formFragment" />
+        <action
+            android:id="@+id/action_taskListFragment_to_userInfoFragment"
+            app:destination="@id/userInfoFragment" />
     </fragment>
     <fragment
         android:id="@+id/formFragment"
@@ -55,4 +58,9 @@
             android:id="@+id/action_formFragment_to_taskListFragment"
             app:destination="@id/taskListFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/userInfoFragment"
+        android:name="com.jrmydorm.todo.user.UserInfoFragment"
+        android:label="fragment_user_info"
+        tools:layout="@layout/fragment_user_info" />
 </navigation>

@@ -6,6 +6,7 @@ import com.jrmydorm.todo.models.UserInfo
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
+import okhttp3.MultipartBody
 
 class UserInfoViewModel : ViewModel() {
     private val userInfoRepository = UserInfoRepository()
@@ -13,10 +14,11 @@ class UserInfoViewModel : ViewModel() {
     private val _userInfo = MutableStateFlow<UserInfo?>(null)
     public val userInfo: StateFlow<UserInfo?> = _userInfo
 
-    fun uploadAvatar(readBytes: ByteArray) {
+
+    fun uploadAvatar(part: MultipartBody.Part) {
         viewModelScope.launch {
-            val userInfoResponse = userInfoRepository.uploadAvatar(readBytes);
-            if (userInfoResponse != null) {
+            val userInfoResponse = userInfoRepository.uploadAvatar(part)
+            if(userInfoResponse != null){
                 _userInfo.value = userInfoResponse
             }
         }

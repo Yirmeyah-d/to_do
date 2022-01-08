@@ -7,22 +7,36 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" >
     <ImageView
-        android:id="@+id/image_view"
+        android:id="@+id/user_avatar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         tools:srcCompat="@tools:sample/avatars" />
 
-    <TextView
-        android:id="@+id/user_name_text_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="TextView" />
 
-    <TextView
-        android:id="@+id/user_email_text_view"
+    <EditText
+        android:id="@+id/edit_firstname_txtview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="TextView" />
+        android:ems="10"
+        android:hint="Firstname"
+        android:inputType="textPersonName" />
+
+    <EditText
+        android:id="@+id/edit_lastname_txtview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="Last name"
+        android:inputType="textPersonName" />
+
+    <EditText
+        android:id="@+id/edit_email_txtview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="Email"
+        android:inputType="textPersonName" />
+
 
     <Button
         android:id="@+id/upload_image_button"
@@ -37,7 +51,7 @@
         android:text="Prendre une photo" />
 
     <Button
-        android:id="@+id/edit_user_info"
+        android:id="@+id/edit_user_info_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="EDITER MON PROFIL" />

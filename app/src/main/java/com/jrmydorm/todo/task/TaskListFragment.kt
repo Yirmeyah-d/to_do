@@ -1,12 +1,10 @@
 package com.jrmydorm.todo.task
 
-import android.content.Intent
 import android.os.Bundle
 import android.preference.PreferenceManager
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.lifecycleScope
@@ -15,7 +13,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import coil.load
 import coil.transform.CircleCropTransformation
 import com.jrmydorm.todo.R
-import com.jrmydorm.todo.UserInfoActivity
 import com.jrmydorm.todo.databinding.FragmentTaskListBinding
 import com.jrmydorm.todo.models.Task
 import com.jrmydorm.todo.network.Api
@@ -39,9 +36,6 @@ class TaskListFragment : Fragment() {
             }
 
             override fun onClickEdit(task: Task) {
-                //val intent = Intent(activity, FormActivity::class.java)
-                //intent.putExtra("task", task)
-                //updateFormLauncher.launch(intent)
                 setCurrentNavigationResult(task, "task")
                 findNavController().navigate(R.id.action_taskListFragment_to_formFragment)
             }
@@ -49,18 +43,6 @@ class TaskListFragment : Fragment() {
         return listener
     }
 
-    val createFormLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            val task = result.data?.getSerializableExtra("task") as? Task
-
-            if (task != null) {
-                lifecycleScope.launch {
-                    viewModel.addTask(task)
-                }
-
-            }
-
-        }
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -90,8 +72,7 @@ class TaskListFragment : Fragment() {
         }
 
         binding.userAvatar.setOnClickListener{
-            val intent = Intent(activity, UserInfoActivity::class.java)
-            createFormLauncher.launch(intent)
+            findNavController().navigate(R.id.action_taskListFragment_to_userInfoFragment)
         }
 
         lifecycleScope.launch {

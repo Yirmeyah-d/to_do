@@ -13,6 +13,7 @@
         <entry key="app/src/main/res/layout/fragment_login.xml" value="0.1322463768115942" />
         <entry key="app/src/main/res/layout/fragment_signup.xml" value="0.25" />
         <entry key="app/src/main/res/layout/fragment_task_list.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/fragment_user_info.xml" value="0.125" />
         <entry key="app/src/main/res/layout/item_task.xml" value="0.14583333333333334" />
       </map>
     </option>

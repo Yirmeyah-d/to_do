@@ -1,4 +1,4 @@
-package com.jrmydorm.todo.data
+package com.jrmydorm.todo.user
 
 import com.jrmydorm.todo.models.UserInfo
 import com.jrmydorm.todo.network.Api

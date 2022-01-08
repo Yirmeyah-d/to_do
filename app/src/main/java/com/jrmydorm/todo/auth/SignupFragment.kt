@@ -1,4 +1,4 @@
-package com.jrmydorm.todo.signup
+package com.jrmydorm.todo.auth
 
 import android.os.Bundle
 import android.preference.PreferenceManager
@@ -12,7 +12,6 @@ import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.jrmydorm.todo.R
 import com.jrmydorm.todo.databinding.FragmentSignupBinding
-import com.jrmydorm.todo.models.LoginForm
 import com.jrmydorm.todo.models.SignUpForm
 import com.jrmydorm.todo.network.Api
 import com.jrmydorm.todo.network.Api.SHARED_PREF_TOKEN_KEY

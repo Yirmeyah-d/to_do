@@ -5,9 +5,9 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class SignUpForm(
-    @SerialName("firstName")
+    @SerialName("firstname")
     val firstName: String,
-    @SerialName("lastName")
+    @SerialName("lastname")
     val lastName: String,
     @SerialName("email")
     val email   : String,

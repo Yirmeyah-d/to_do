@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/authenticationFragment"
-        android:name="com.jrmydorm.todo.authentication.AuthenticationFragment"
+        android:name="com.jrmydorm.todo.auth.AuthenticationFragment"
         android:label="AuthenticationFragment" >
         <action
             android:id="@+id/action_authenticationFragment_to_signupFragment"
@@ -22,7 +22,7 @@
     </fragment>
     <fragment
         android:id="@+id/loginFragment"
-        android:name="com.jrmydorm.todo.login.LoginFragment"
+        android:name="com.jrmydorm.todo.auth.LoginFragment"
         android:label="fragment_login"
         tools:layout="@layout/fragment_login" >
         <action
@@ -31,7 +31,7 @@
     </fragment>
     <fragment
         android:id="@+id/signupFragment"
-        android:name="com.jrmydorm.todo.signup.SignupFragment"
+        android:name="com.jrmydorm.todo.auth.SignupFragment"
         android:label="fragment_signup"
         tools:layout="@layout/fragment_signup" >
         <action
@@ -40,7 +40,7 @@
     </fragment>
     <fragment
         android:id="@+id/taskListFragment"
-        android:name="com.jrmydorm.todo.tasklist.TaskListFragment"
+        android:name="com.jrmydorm.todo.task.TaskListFragment"
         android:label="TaskListFragment" >
         <action
             android:id="@+id/action_taskListFragment_to_formFragment"

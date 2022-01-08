@@ -1,13 +1,11 @@
-package com.jrmydorm.todo.tasklist
+package com.jrmydorm.todo.task
 
 import androidx.lifecycle.ViewModel
-import com.jrmydorm.todo.data.TasksRepository
 import com.jrmydorm.todo.models.Task
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.launch
-import java.lang.IllegalStateException
 
 class TaskListViewModel : ViewModel() {
     private val tasksRepository = TasksRepository()

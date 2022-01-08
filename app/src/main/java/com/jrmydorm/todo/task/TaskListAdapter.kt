@@ -1,4 +1,4 @@
-package com.jrmydorm.todo.tasklist
+package com.jrmydorm.todo.task
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.ListAdapter

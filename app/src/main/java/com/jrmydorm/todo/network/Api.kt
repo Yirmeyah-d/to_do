@@ -3,8 +3,8 @@ package com.jrmydorm.todo.network
 import android.content.Context
 import android.preference.PreferenceManager
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
-import com.jrmydorm.todo.interfaces.TasksWebService
-import com.jrmydorm.todo.interfaces.UserWebService
+import com.jrmydorm.todo.services.TasksWebService
+import com.jrmydorm.todo.services.UserWebService
 import kotlinx.serialization.json.Json
 import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient

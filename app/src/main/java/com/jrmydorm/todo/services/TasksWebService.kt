@@ -1,4 +1,4 @@
-package com.jrmydorm.todo.interfaces
+package com.jrmydorm.todo.services
 
 import com.jrmydorm.todo.models.Task
 import retrofit2.Response

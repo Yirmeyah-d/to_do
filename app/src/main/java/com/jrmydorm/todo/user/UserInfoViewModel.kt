@@ -2,7 +2,6 @@ package com.jrmydorm.todo.user
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.jrmydorm.todo.data.UserInfoRepository
 import com.jrmydorm.todo.models.UserInfo
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

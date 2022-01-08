@@ -1,4 +1,4 @@
-package com.jrmydorm.todo.tasklist
+package com.jrmydorm.todo.task
 
 import android.content.Intent
 import android.os.Bundle
@@ -21,15 +21,14 @@ import com.jrmydorm.todo.databinding.FragmentTaskListBinding
 import com.jrmydorm.todo.models.Task
 import com.jrmydorm.todo.network.Api
 import com.jrmydorm.todo.network.Api.SHARED_PREF_TOKEN_KEY
-import com.jrmydorm.todo.user.UserInfoViewModel
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class TaskListFragment : Fragment() {
-    private lateinit var binding: FragmentTaskListBinding
+    private var _binding: FragmentTaskListBinding? = null
     private val adapter = TaskListAdapter(createListener())
     private val viewModel: TaskListViewModel by viewModels()
-    private val userInfoViewModel: UserInfoViewModel by viewModels()
+    private val binding get() = _binding!!
 
     fun createListener(): TaskListListener {
         val listener = object :  TaskListListener{
@@ -75,7 +74,7 @@ class TaskListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         super.onCreateView(inflater, container, savedInstanceState)
-        binding = FragmentTaskListBinding.inflate(layoutInflater)
+        _binding = FragmentTaskListBinding.inflate(layoutInflater)
         return binding.root
     }
 
@@ -107,27 +106,20 @@ class TaskListFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
-/*        lifecycleScope.launch {
+        lifecycleScope.launch {
             val userInfo = Api.userWebService.getInfo().body()!!
-            binding.userInfoTextView.text = "${userInfo.firstName} ${userInfo.lastName}"
+            binding.userInfoTextView.text = "Bienvenue ${userInfo.firstName} ${userInfo.lastName}"
             viewModel.loadTasks()
             binding.imageView.load(userInfo.avatar) {
                 transformations(CircleCropTransformation())
                 error(R.drawable.ic_launcher_background)
             }
-        }*/
-        lifecycleScope.launch {
-            userInfoViewModel.loadUserInfo()
-            userInfoViewModel.userInfo.collectLatest { newUserInfo ->
-                binding.userInfoTextView.text = "${newUserInfo?.firstName} ${newUserInfo?.lastName}"
-                binding.imageView.load(newUserInfo?.avatar) {
-                    transformations(CircleCropTransformation())
-                    error(R.drawable.ic_launcher_background)
-                }
-            }
-
         }
+    }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
 }

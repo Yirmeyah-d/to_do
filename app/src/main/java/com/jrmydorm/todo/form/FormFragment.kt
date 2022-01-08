@@ -6,14 +6,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
-import com.jrmydorm.todo.R
 import com.jrmydorm.todo.models.Task
 import java.util.*
 import com.jrmydorm.todo.databinding.FragmentFormBinding
 
 class FormFragment : Fragment() {
 
-    private lateinit var binding: FragmentFormBinding
+    private lateinit var _binding: FragmentFormBinding
 private lateinit var task : Task
 
     fun <T> Fragment.setNavigationResult(result: T, key: String = "result") {
@@ -21,11 +20,20 @@ private lateinit var task : Task
     }
 
 
+    override fun onCreateView(
+        inflater: LayoutInflater, container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        _binding = FragmentFormBinding.inflate(layoutInflater)
+        return _binding.root
+    }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val button = binding.validationButton
-        val editTextTitle = binding.titleInputEditText
-        val editTextDesc = binding.descInputEditText
+
+        val button = _binding.validationButton
+        val editTextTitle = _binding.titleInputEditText
+        val editTextDesc = _binding.descInputEditText
         //val editTask = intent.getSerializableExtra("task") as Task?
 
 
@@ -67,12 +75,5 @@ private lateinit var task : Task
         //}
     }
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        binding = FragmentFormBinding.inflate(layoutInflater)
-        return binding.root
-    }
 
 }

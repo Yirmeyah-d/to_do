@@ -1,4 +1,4 @@
-package com.jrmydorm.todo.data
+package com.jrmydorm.todo.task
 
 import com.jrmydorm.todo.models.Task
 import com.jrmydorm.todo.network.Api

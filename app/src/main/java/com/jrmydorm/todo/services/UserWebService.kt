@@ -1,6 +1,5 @@
-package com.jrmydorm.todo.interfaces
+package com.jrmydorm.todo.services
 
-import android.net.Uri
 import com.jrmydorm.todo.models.*
 import okhttp3.MultipartBody
 import retrofit2.Response

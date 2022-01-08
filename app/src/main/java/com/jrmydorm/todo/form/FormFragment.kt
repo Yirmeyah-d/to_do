@@ -9,11 +9,14 @@ import androidx.navigation.fragment.findNavController
 import com.jrmydorm.todo.models.Task
 import java.util.*
 import com.jrmydorm.todo.databinding.FragmentFormBinding
+import com.jrmydorm.todo.utils.NavigationUtils.Companion.getPreviousNavigationResult
 
 class FormFragment : Fragment() {
 
-    private lateinit var _binding: FragmentFormBinding
-private lateinit var task : Task
+    private lateinit var task: Task
+    private var _binding: FragmentFormBinding? = null
+    private val binding get() = _binding!!
+
 
     fun <T> Fragment.setNavigationResult(result: T, key: String = "result") {
         findNavController().previousBackStackEntry?.savedStateHandle?.set(key, result)
@@ -25,29 +28,23 @@ private lateinit var task : Task
         savedInstanceState: Bundle?
     ): View? {
         _binding = FragmentFormBinding.inflate(layoutInflater)
-        return _binding.root
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-        val button = _binding.validationButton
-        val editTextTitle = _binding.titleInputEditText
-        val editTextDesc = _binding.descInputEditText
-        //val editTask = intent.getSerializableExtra("task") as Task?
+        var task = getPreviousNavigationResult<Task>("task")
 
 
-        val navController = findNavController();
-        // We use a String here, but any type that can be put in a Bundle is supported
-        navController.currentBackStackEntry?.savedStateHandle?.getLiveData<Task>("task")?.observe(
-            viewLifecycleOwner
-        ) { editTask ->
-            editTextDesc.setText(editTask?.description)
-            editTextTitle.setText(editTask?.title)
-            task = editTask
-        }
+        val validationButton = binding.validationButton
+        val editTextTitle = binding.titleInputEditText
+        val editTextDesc = binding.descInputEditText
 
-        button.setOnClickListener {
+        editTextTitle.setText(task?.title)
+        editTextDesc.setText(task?.description)
+
+
+        validationButton.setOnClickListener {
             val id = task?.id ?: UUID.randomUUID().toString()
 
             val newTask = Task(
@@ -55,24 +52,10 @@ private lateinit var task : Task
                 title = editTextTitle.text.toString(),
                 description = editTextDesc.text.toString()
             )
-            setNavigationResult(newTask, "task")
+            setNavigationResult(newTask, "newTask")
             findNavController().popBackStack()
-            //intent.putExtra("task", newTask)
-            //setResult(AppCompatActivity.RESULT_OK, intent)
-            //finish()
         }
 
-        //editTextDesc.setText(editTask?.description)
-        //editTextTitle.setText(editTask?.title)
-
-       // button.setOnClickListener {
-            //val id = editTask?.id ?: UUID.randomUUID().toString()
-
-            //val newTask = Task(id = id, title = editTextTitle.text.toString(),description = editTextDesc.text.toString())
-            //intent.putExtra("task", newTask)
-            //setResult(AppCompatActivity.RESULT_OK, intent)
-            //finish()
-        //}
     }
 
 

@@ -14,13 +14,15 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import coil.load
 import coil.transform.CircleCropTransformation
-import com.jrmydorm.todo.FormActivity
 import com.jrmydorm.todo.R
 import com.jrmydorm.todo.UserInfoActivity
 import com.jrmydorm.todo.databinding.FragmentTaskListBinding
 import com.jrmydorm.todo.models.Task
 import com.jrmydorm.todo.network.Api
 import com.jrmydorm.todo.network.Api.SHARED_PREF_TOKEN_KEY
+import com.jrmydorm.todo.utils.NavigationUtils.Companion.getCurrentNavigationResultLiveData
+import com.jrmydorm.todo.utils.NavigationUtils.Companion.removeCurrentNavigationResult
+import com.jrmydorm.todo.utils.NavigationUtils.Companion.setCurrentNavigationResult
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
@@ -37,9 +39,11 @@ class TaskListFragment : Fragment() {
             }
 
             override fun onClickEdit(task: Task) {
-                val intent = Intent(activity, FormActivity::class.java)
-                intent.putExtra("task", task)
-                updateFormLauncher.launch(intent)
+                //val intent = Intent(activity, FormActivity::class.java)
+                //intent.putExtra("task", task)
+                //updateFormLauncher.launch(intent)
+                setCurrentNavigationResult(task, "task")
+                findNavController().navigate(R.id.action_taskListFragment_to_formFragment)
             }
         }
         return listener
@@ -58,16 +62,6 @@ class TaskListFragment : Fragment() {
 
         }
 
-    val updateFormLauncher =
-        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-            val task = result.data?.getSerializableExtra("task") as? Task
-            if (task != null) {
-                lifecycleScope.launch {
-                    viewModel.editTask(task)
-                }
-            }
-        }
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -80,11 +74,23 @@ class TaskListFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val recyclerView = binding.recyclerView
-        recyclerView.layoutManager = LinearLayoutManager(activity)
+        viewModel.loadTasks()
+
+        binding.recyclerView.layoutManager = LinearLayoutManager(activity)
         binding.recyclerView.adapter = adapter
-        binding.floatingActionButton.setOnClickListener {
-                val intent = Intent(activity, FormActivity::class.java)
+
+        getCurrentNavigationResultLiveData<Task>("newTask")?.observe(viewLifecycleOwner) { task ->
+            viewModel.editTask(task)
+            removeCurrentNavigationResult<Task>("newTask")
+        }
+
+        binding.addTaskButton.setOnClickListener {
+            removeCurrentNavigationResult<Task>("task")
+            findNavController().navigate(R.id.action_taskListFragment_to_formFragment)
+        }
+
+        binding.userAvatar.setOnClickListener{
+            val intent = Intent(activity, UserInfoActivity::class.java)
             createFormLauncher.launch(intent)
         }
 
@@ -92,10 +98,6 @@ class TaskListFragment : Fragment() {
             viewModel.taskList.collectLatest { newList ->
                 adapter.submitList(newList)
             }
-        }
-        binding.imageView.setOnClickListener{
-            val intent = Intent(activity, UserInfoActivity::class.java)
-            createFormLauncher.launch(intent)
         }
 
         binding.signOutButton.setOnClickListener{
@@ -109,8 +111,7 @@ class TaskListFragment : Fragment() {
         lifecycleScope.launch {
             val userInfo = Api.userWebService.getInfo().body()!!
             binding.userInfoTextView.text = "Bienvenue ${userInfo.firstName} ${userInfo.lastName}"
-            viewModel.loadTasks()
-            binding.imageView.load(userInfo.avatar) {
+            binding.userAvatar.load(userInfo.avatar) {
                 transformations(CircleCropTransformation())
                 error(R.drawable.ic_launcher_background)
             }

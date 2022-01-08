@@ -7,23 +7,35 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class UserInfoViewModel  : ViewModel() {
+class UserInfoViewModel : ViewModel() {
     private val userInfoRepository = UserInfoRepository()
 
     private val _userInfo = MutableStateFlow<UserInfo?>(null)
-    public val userInfo : StateFlow<UserInfo?> = _userInfo
+    public val userInfo: StateFlow<UserInfo?> = _userInfo
 
     fun uploadAvatar(readBytes: ByteArray) {
         viewModelScope.launch {
-            _userInfo.value = userInfoRepository.uploadAvatar(readBytes);
+            val userInfoResponse = userInfoRepository.uploadAvatar(readBytes);
+            if (userInfoResponse != null) {
+                _userInfo.value = userInfoResponse
+            }
         }
     }
 
-    fun loadUserInfo(){
+    fun loadUserInfo() {
         viewModelScope.launch {
-            val userResponse = userInfoRepository.loadUserInfo();
-            if(userResponse != null){
-                _userInfo.value = userResponse
+            val userInfoResponse = userInfoRepository.loadUserInfo();
+            if (userInfoResponse != null) {
+                _userInfo.value = userInfoResponse
+            }
+        }
+    }
+
+    fun updateUserInfo(userInfo: UserInfo) {
+        viewModelScope.launch {
+            val userInfoResponse = userInfoRepository.updateUserInfo(userInfo)
+            if (userInfoResponse != null) {
+                _userInfo.value = userInfoResponse
             }
         }
     }

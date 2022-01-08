@@ -16,7 +16,6 @@
         <activity
             android:name=".UserInfoActivity"
             android:exported="false" />
-        <activity android:name=".FormActivity" />
         <activity
             android:name=".MainActivity"
             android:exported="true">

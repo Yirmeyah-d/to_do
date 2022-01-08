@@ -41,11 +41,19 @@ class TaskListViewModel : ViewModel() {
 
     fun editTask(task: Task) {
         viewModelScope.launch {
-            val taskResponse = tasksRepository.updateTask(task);
-            if(taskResponse != null){
-                val oldTask = taskList.value.firstOrNull { it.id == taskResponse.id }
-                if (oldTask != null) _taskList.value = taskList.value - oldTask + taskResponse
+            val existingTask = firstOrNullTask(task)
+            if (existingTask != null){
+                val updatedTask = tasksRepository.updateTask(task)
+                if(updatedTask != null){
+                    _taskList.value = _taskList.value - existingTask + updatedTask
+                }
+            }else{
+                addTask(task)
             }
         }
+    }
+
+    private fun firstOrNullTask(task: Task): Task?{
+        return taskList.value.firstOrNull { it.id == task.id }
     }
 }

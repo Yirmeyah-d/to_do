@@ -26,5 +26,9 @@ class UserInfoRepository {
         return if(getInfoResponse.isSuccessful) getInfoResponse.body() else null
     }
 
+    suspend fun updateUserInfo(userInfo: UserInfo): UserInfo? {
+        val response = userWebService.update(userInfo)
+        return if (response.isSuccessful) response.body() else null
+    }
 
 }
